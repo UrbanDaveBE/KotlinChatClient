@@ -53,6 +53,13 @@ class ChatApi(private val host: String, private val port: Int) {
         return res.online
     }
 
+    suspend fun getAllUsers(): List<String> {
+        val response = client.get(url("/users"))
+        val text = response.body<String>()
+        val res = jsonParser.decodeFromString<UserListResponse>(text)
+        return res.users
+    }
+
     suspend fun sendMessage(token: String, to: String, msg: String): Boolean {
         val response = client.post(url("/chat/send")) {
             contentType(ContentType.Application.Json)
@@ -71,5 +78,16 @@ class ChatApi(private val host: String, private val port: Int) {
         val text = response.body<String>()
         val obj = jsonParser.decodeFromString<MessageListResponse>(text)
         return obj.messages
+    }
+
+    suspend fun logout(token: String) {
+        try {
+            client.post(url("/user/logout")) {
+                contentType(ContentType.Application.Json)
+                setBody(LogoutRequest(token))
+            }
+        } catch (e: Exception) {
+            println("Logout warning: ${e.message}")
+        }
     }
 }

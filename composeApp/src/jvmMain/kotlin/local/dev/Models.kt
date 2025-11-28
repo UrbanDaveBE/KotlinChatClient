@@ -27,4 +27,10 @@ data class IncomingMessage(val username: String, val message: String)
 data class MessageListResponse(val messages: List<IncomingMessage>)
 
 @Serializable
+data class UserListResponse(val users: List<String>)
+
+@Serializable
 data class OnlineUsersResponse(val online: List<String>)
+
+@Serializable
+data class LogoutRequest(val token: String)
