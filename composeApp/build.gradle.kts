@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin.get()
+
 }
 
 kotlin {
