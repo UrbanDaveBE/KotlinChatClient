@@ -3,6 +3,13 @@ package local.dev
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class RegisterRequest(val username: String, val password: String)
+@Serializable
+data class RegisterResponse(
+    val username: String? = null,
+    val Error: String? = null
+)
+@Serializable
 data class LoginRequest(val username: String, val password: String)
 
 @Serializable
@@ -34,3 +41,14 @@ data class OnlineUsersResponse(val online: List<String>)
 
 @Serializable
 data class LogoutRequest(val token: String)
+
+data class UiChatMessage(
+    val sender: String,
+    val recipient: String,
+    val message: String,
+    val timestamp: Long = System.currentTimeMillis()
+)
+data class UserUiItem(
+    val username: String,
+    val isOnline: Boolean
+)

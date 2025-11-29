@@ -5,6 +5,7 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.*
@@ -34,6 +35,34 @@ class ChatApi(private val host: String, private val port: Int) {
         return obj.ping
     }
 
+    suspend fun register(username: String, password: String): String? {
+        return try {
+            val response = client.post(url("/user/register")) {
+                contentType(ContentType.Application.Json)
+                setBody(RegisterRequest(username, password))
+            }
+
+            val text = response.bodyAsText()
+
+            try {
+                val res = jsonParser.decodeFromString<RegisterResponse>(text)
+
+                if (!res.Error.isNullOrBlank()) {
+                    return res.Error
+                }
+                if (!res.username.isNullOrBlank()) {
+                    return null
+                }
+
+                return "Unbekannte Antwort: $text"
+            } catch (e: Exception) {
+                if (response.status.value in 200..299) return null
+                return "Fehler beim Lesen der Antwoart"
+            }
+        } catch (e: Exception) {
+            return "Verbindungsfehler: ${e.message}"
+        }
+    }
     suspend fun login(username: String, password: String): String {
         val response = client.post(url("/user/login")) {
             contentType(ContentType.Application.Json)
